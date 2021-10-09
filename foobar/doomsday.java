@@ -26,6 +26,14 @@ class Solution{
 			y = den;
 			simplify();
 		}
+		public void negate(){
+			this.x = -x;
+		}
+		public Fraction plusone(){
+			this.x = this.x+this.y;
+			simplify();
+			return this;
+		}
 	}
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
@@ -70,11 +78,18 @@ class Solution{
     	}
 		System.out.println();
     	Fraction[][] topmat = transform(opmat, qindx, nindx);
-		for(int i=0; i<r; i++){
+		for(int i=0; i<qindx.size(); i++){
 			for(int j=0; j<r; j++){
-				System.out.print(topmat[i][j].x+" ");
+				System.out.print(topmat[i][j].x+"\t");
 			}
 			System.out.println();
+		}
+		//handle state 0 as terminal
+		if(qindx.size()==0){
+			int[] initer = new int[r+1];
+			initer[0] = 1;
+			initer[initer.length-1] = 1;
+			return initer;
 		}
 		System.out.println();
     	return m[0];//no dont lol
@@ -85,14 +100,14 @@ class Solution{
     	for(int i:qidx) corres.add(i);
     	for(int i:nidx) corres.add(i); //now corres has new ordering
 		int mtr_dim = corres.size();
-    	Fraction[][] topmat = new Fraction[mtr_dim][mtr_dim];
-		for(int i=0; i<mtr_dim; i++){
+    	Fraction[][] topmat = new Fraction[qidx.size()][mtr_dim];
+		for(int i=0; i<qidx.size(); i++){
 			for(int j=0; j<mtr_dim; j++){
 				topmat[i][j]=given[corres.get(i)][corres.get(j)];
+				if((i<qidx.size())&&(j<qidx.size())) topmat[i][j].negate();
+				if(i==j) topmat[i][j].plusone();
 			}
 		}
     	return topmat;
     }
-
-
 }
