@@ -5,14 +5,17 @@ class Solution{
     static class Fraction{
         long x;
         long y;
-        public Fraction(int x, int y){
+        public Fraction(long x, long y){
             this.x = x;
             this.y = y;
             simplify();
         }
-        public long gcd(long a, long b){
+        public static long gcd(long a, long b){
                if (b==0) return a;
                return gcd(b,a%b);
+        }
+        public static long lcm(long a, long b){
+            return a*b/gcd(a,b);
         }
         public long abs(long x){
             return (x<0)?-x:x;
@@ -48,10 +51,8 @@ class Solution{
             add(another);
         }
         public Fraction mul(Fraction another){
-            this.x = this.x*another.x;
-            this.y = this.y*another.y;
-            simplify();
-            return this;
+            Fraction toret = new Fraction(this.x*another.x,this.y*another.y);
+            return toret;
         }
     }
     public static void main(String[] args){
@@ -101,46 +102,51 @@ class Solution{
             }
             System.out.println();
         }
-        //handle state 0 as terminal
-        if(qindx.size()==0){
-            int[] initer = new int[r+1];
-            initer[0] = 1;
-            initer[initer.length-1] = 1;
-            return initer;
+        //TODO: handle state 0 as terminal
+        if(topmat.length==0){
+            int[] ans = new int[opmat.length+1];
+            for(int i=0; i<opmat.length; i++){
+                ans[i] = 0;
+            }
+            ans[0] = 1; ans[opmat.length] = 1;
+            return ans;
         }
         Fraction[] sol = find_sol(topmat);
         System.out.println(sol);
-        return m[0];//no dont lol
+        long[] numar = new long[sol.length];
+        long[] denar = new long[sol.length];
+        long lcm = 1;
+        for(int i=0; i<sol.length; i++){
+            numar[i] = sol[i].x;
+            denar[i] = sol[i].y;
+            lcm = Fraction.lcm(denar[i], lcm);
+        }
+        int[] ansar = new int[sol.length+1];
+        for(int i=0; i<sol.length; i++){
+            ansar[i] = (int) ((int) numar[i])*(((int) lcm)/((int)denar[i]));
+        }
+        ansar[sol.length] = (int) lcm;
+        return ansar;//no dont lol
     }
 
     public static Fraction[] find_sol(Fraction[][] qr){
-        //qr[0][0] can never be zero
-        Fraction normalize = qr[0][0];
+        //qr[i][i] can never be zero
+        //CODE HERE
+        for(int i=qr.length-1; i>0; i--){
+            for(int j=qr.length-2; j>-1; j--){
+                zerofy(qr[j], qr[i], i);
+            }
+        }
+        
+        Fraction normalize = new Fraction(qr[0][0].x, qr[0][0].y);
         for(int i=0; i<qr[0].length; i++){
             qr[0][i].div(normalize);
         }
         //qr[0][0] is now 1/1
-        for(int i=1; i<qr.length;i++){
-            zerofy(qr[i], qr[0], 0);
-        }
-        //first column is [1,0,0,0..] now
-        for(int col=1; col<qr.length; col++){
-            if(qr[0][col].x==0) continue;
-            int m = 0;
-            for(int row=1; row<qr.length; row++){
-                ++m;
-                if(qr[row][col].x!=0) break;
-            }
-            normalize = qr[m][col];
-            for(int i=0; i<qr[0].length; i++){
-                qr[m][i].div(normalize);
-            }
-            zerofy(qr[0], qr[m], col);
-        }
 
         Fraction[] tr = new Fraction[qr[0].length-qr.length];
         for(int i=0;i<qr[0].length-qr.length; i++){
-            tr[i] = qr[0][qr.length-1+i];
+            tr[i] = qr[0][qr.length+i];
         }
 
         return tr;
@@ -148,8 +154,10 @@ class Solution{
 
     public static void zerofy(Fraction[] tozero, Fraction[] ref, int c){
         //r = r-r[0]*ref
+        Fraction sobject = new Fraction(tozero[c].x, tozero[c].y);
+        sobject.div(ref[c]);
         for(int i=0; i<tozero.length; i++){
-            tozero[i].sub(tozero[c].mul(ref[i]));
+            tozero[i].sub(sobject.mul(ref[i]));
         }
     }
 
