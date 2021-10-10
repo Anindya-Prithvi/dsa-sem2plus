@@ -78,6 +78,7 @@ class Solution{
         ArrayList<Integer> qindx = new ArrayList<Integer>();
         ArrayList<Integer> nindx = new ArrayList<Integer>();
         Fraction[][] opmat = new Fraction[r][r];
+        boolean flag=false;
         for(int i = 0; i<r; i++){
             for(int j=0; j<r; j++){
                 sum+=m[i][j];
@@ -86,6 +87,7 @@ class Solution{
                 qindx.add(i); //add transition row name
             }
             else{
+                if(i==0){flag = true;}
                 nindx.add(i); //add terminal row name
             }
             if(sum==0){sum=1;}
@@ -93,6 +95,15 @@ class Solution{
                 opmat[i][j] = new Fraction(m[i][j], sum);
             }
             sum=0;
+        }
+        if (flag){
+            int sz = nindx.size();
+            int[] ans = new int[sz+1];
+            for(int i=0; i<sz; i++){
+                ans[i] = 0;
+            }
+            ans[0] = 1; ans[sz] = 1;
+            return ans;
         }
         System.out.println();
         Fraction[][] topmat = transform(opmat, qindx, nindx);
@@ -133,7 +144,8 @@ class Solution{
         //qr[i][i] can never be zero
         //CODE HERE
         for(int i=qr.length-1; i>0; i--){
-            for(int j=qr.length-2; j>-1; j--){
+            for(int j=i-1; j>-1; j--){
+                if(qr[j][i].x==0){continue;}
                 zerofy(qr[j], qr[i], i);
             }
         }
