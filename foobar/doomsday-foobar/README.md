@@ -1,5 +1,5 @@
-This file contains the approach I took to solve the problem.
-
+This file contains the approach I took to solve the problem.  
+[Jump to approach](https://github.com/Anindya-Prithvi/dsa-sem2plus/tree/main/foobar/doomsday-foobar#approach)  
 First, let's see the problem statement:
 
 ## Doomsday Fuel
@@ -76,8 +76,12 @@ Output:
     [0, 3, 2, 9, 14]
 
 
-## Approach  
+# Approach  
 This is a super interesting question on terminating/absorbing markov chains. In simple words, markov chains are state machines or directed graphs. Here is an example  
 <img align="center" src="https://upload.wikimedia.org/wikipedia/commons/9/95/Finance_Markov_chain_example_state_space.svg"></img>  
-The numbers on the arrows represent the probability to go into that state. This is a non-terminating markov chain. A terminating chain must have a sink (i.e. a state which is stable/the probability of leaving that state is 0).
+The numbers on the arrows represent the probability to go into that state. This is a non-terminating markov chain. A terminating chain must have a sink (i.e. a state which is stable/the probability of leaving that state is 0). Here is an example  
+<img align="center" src="https://ds055uzetaobb.cloudfront.net/brioche/uploads/ebYpMdDsNt-absorbing-state-not-chain.png?width=1000"></img>
+Here __A__ is a terminal state, similarly we can have many terminal states.  
+In real world, we can use markov chains to model many things like stability of an atom (also in the question) or make a chess Engine/ almost anything which involves probability. The cycles in markov chains are particularly interesting. (It may also occur that a chain has 2 states such that they only cycle between each other, assuming there are no terminal states, we can say that everything would result falling into that 2 state chain).  
 
+Coming to the question given. Here it is guaranteed that there will be a stable state/absorbing or terminal markov chain. Refer to [this article](https://en.wikipedia.org/wiki/Absorbing_Markov_chain) to learn more. In a general markov chain, we need to compute the n<sup>th</sup> power of the transition matrix to get the n<sup>th</sup> state of the system. In case it's acyclic chain, it'll collapse at state __C__ and multiplying it by the transition matrix will result in __C__ again. In our question, we already have a cycle in the example, so we need something better to compute the __C<sup>∞</sup>__ . Here's when a probability course helps. To get the absorbing state, we need the absorbing matrix (commonly referred as __B = NR__). So, we convert our given matrix
